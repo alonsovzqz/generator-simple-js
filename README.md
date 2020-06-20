@@ -1,6 +1,6 @@
 # generator-simple-js [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
-> Generates a basic development environment.
+> Generates the basic structure for a simple development environment using [Gulp](https://gulpjs.com/) and [browserSync](https://www.browsersync.io/). Also, may or may not include [Bootstrap](https://getbootstrap.com/) and [SASS](https://sass-lang.com/) or [LESS](http://lesscss.org/).
 
 ## Installation
 
