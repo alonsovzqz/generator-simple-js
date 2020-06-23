@@ -26,6 +26,8 @@ function generatePkgDependenciesFile(options) {
 
   if (options.addBootstrap) {
     pkgObj.devDependencies["bootstrap"] = "^4.5.0";
+    pkgObj.devDependencies["jquery"] = "^3.5.1";
+    pkgObj.devDependencies["popper.js"] = "^1.16.1";
   }
 
   switch (options.stylesPreprocessor) {
