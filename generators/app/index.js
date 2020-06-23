@@ -16,10 +16,10 @@ function generatorName(name) {
 function generatePkgDependenciesFile(options) {
   const pkgObj = {
     dependencies: {
+      gulp: "^4.0.2",
       "gulp-cli": "^2.3.0"
     },
     devDependencies: {
-      gulp: "^4.0.2",
       "browser-sync": "^2.26.7"
     }
   };
@@ -94,7 +94,7 @@ module.exports = class extends Generator {
       name: this.props.projectName,
       git: false,
       travis: false,
-      skipInstall: this.options.skipInstall,
+      //   skipInstall: this.options.skipInstall,
       readme: ""
     });
   }
@@ -133,7 +133,7 @@ module.exports = class extends Generator {
 
     // Generate the proper stylesheet file
     let stylesInitialLines = `/* The styles goes here */\n${
-      this.props.addBootstrap && !userOptionsObj.isPrecompiled
+      this.props.addBootstrap && userOptionsObj.isPrecompiled
         ? '@import "../../node_modules/bootstrap/scss/bootstrap";'
         : ""
     }`;
@@ -149,9 +149,19 @@ module.exports = class extends Generator {
       this.destinationPath("src/js/script.js"),
       "// Place your Javascript code here"
     );
+
+    this.fs.copy(
+      this.templatePath("src/assets/assets_files_goes_here.txt"),
+      this.destinationPath("src/assets/assets_files_goes_here.txt")
+    );
   }
 
-  //   install() {
-  //     this.installDependencies();
-  //   }
+  install() {
+    this.installDependencies({
+      npm: true,
+      bower: false,
+      yarn: false
+    });
+    this.npmInstall();
+  }
 };

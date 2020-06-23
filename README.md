@@ -1,12 +1,13 @@
 # generator-simple-js [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
-> Generates the basic structure for a simple development environment using [Gulp](https://gulpjs.com/) and [browserSync](https://www.browsersync.io/). Also, may or may not include [Bootstrap](https://getbootstrap.com/) and [SASS](https://sass-lang.com/) or [LESS](http://lesscss.org/).
+> Generates the basic structure for a simple development environment using [Gulp](https://gulpjs.com/) and [browserSync](https://www.browsersync.io/). Also, may or may not include [Bootstrap](https://getbootstrap.com/) and [SASS](https://sass-lang.com/).
 
 ## Installation
 
-First, install [Yeoman](http://yeoman.io) and generator-simple-js using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
+First, install [Yeoman](http://yeoman.io) and generator-simple-js using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/) and [Gulp.js](https://gulpjs.com/)).
 
 ```bash
+npm install -g gulp
 npm install -g yo
 npm install -g generator-simple-js
 ```
@@ -34,6 +35,18 @@ Scaffold the next project directory structure:
         └── styles.scss
 ```
 
+## What's next?
+
+Once the project has been created you need to go to the project folder by typing in the terminal `cd project-folder`. Inside, you'll need to run the next command:
+
+```bash
+gulp
+```
+
+That command by itself will add the required CSS and JS files to the proper folders and also will launch the project in your default browser, so you can comfortably start coding and each change made in any JS, CSS/SASS, HTML file, the browser will reload with the new changes.
+
+If you want to add more capabilities to your project, feel free to check on [Gulp.js](https://gulpjs.com/) documentation.
+
 ## Getting To Know Yeoman
 
 - Yeoman has a heart of gold.
@@ -42,6 +55,10 @@ Scaffold the next project directory structure:
 - Feel free to [learn more about Yeoman](http://yeoman.io/).
 
 ## Contributing
+
+I'm pretty new to the Open Source community, so, every contribution will be more than helpful to me and to the project, too.
+
+I've created a template for pull requests, but if someone out there has any suggestion on improve template for the template (😆), please help on it, too.
 
 ## License
 
