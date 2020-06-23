@@ -1,24 +1,24 @@
 const { src, dest, watch, series } = require("gulp");
-<%_ if (isPrecompiled) { %><%_ if (preprocesorExtension === "SASS" || preprocesorExtension === "SCSS") { %>
-const sass = require("gulp-sass");<% _} %><%_ if (preprocesorExtension === "LESS") { %>
+<% if (isPrecompiled) { %><% if (preprocesorExtension === "SASS" || preprocesorExtension === "SCSS") { %>
+const sass = require("gulp-sass");<% } %><% if (preprocesorExtension === "LESS") { %>
 const less = require("gulp-less");
-const path = require("path");<% } _%><% } _%>
+const path = require("path");<% } %><% } %>
 const browserSync = require("browser-sync").create();
 
-// Compile scss into css
+// Compile <%= preprocesorExtension.toLowerCase() %> into css
 function style() {
   return src("src/<%= preprocesorExtension.toLowerCase() %>/**/*.<%= preprocesorExtension.toLowerCase() %>")
-  <%_ if (isPrecompiled) { %>
-    <%_ if (preprocesorExtension === "SASS" || preprocesorExtension === "SCSS") { %>
+  <% if (isPrecompiled) { %>
+    <% if (preprocesorExtension === "SASS" || preprocesorExtension === "SCSS") { %>
     .pipe(sass().on("error", sass.logError)) 
-    <% } _%>
-    <%_ if (preprocesorExtension === "LESS") { %>
+    <% } %>
+    <% if (preprocesorExtension === "LESS") { %>
         .pipe(less({
             paths: [path.join(__dirname, '<%= preprocesorExtension.toLowerCase() %>', 'includes')]
         }))
-    <% } _%>
+    <% } %>
     .pipe(dest("src/css"))
-  <% } _%>
+  <% } %>
     .pipe(browserSync.stream());
 }
 
