@@ -32,6 +32,7 @@ function generatePkgDependenciesFile(options) {
     case "LESS":
       pkgObj.dependencies["less"] = "~3.11.3";
       pkgObj.devDependencies["gulp-less"] = "^4.0.1";
+      pkgObj.dependencies["path"] = "^0.12.7";
       break;
     case "SASS":
     case "SCSS":
@@ -104,27 +105,46 @@ module.exports = class extends Generator {
   writing() {
     const pkg = this.fs.readJSON(this.destinationPath("package.json"), {});
     const dependenciesPkg = generatePkgDependenciesFile(this.props);
+    const userOptionsObj = {
+      projectName: this.props.projectName,
+      isPrecompiled:
+        this.props.stylesPreprocessor === "SASS" ||
+        this.props.stylesPreprocessor === "SCSS" ||
+        this.props.stylesPreprocessor === "LESS",
+      includeBootstrap: this.props.addBootstrap,
+      preprocesorExtension: this.props.stylesPreprocessor
+    };
 
     extend(pkg, dependenciesPkg);
     pkg.keywords = pkg.keywords || [];
 
+    // Write package.json
     this.fs.writeJSON(this.destinationPath("package.json"), pkg);
 
+    // Copy the index.html file
     this.fs.copyTpl(
       this.templatePath("src/index.html"),
       this.destinationPath("src/index.html"),
-      {
-        projectName: this.props.projectName,
-        isPrecompiled:
-          this.props.stylesPreprocessor === "SASS" ||
-          this.props.stylesPreprocessor === "SCSS" ||
-          this.props.stylesPreprocessor === "LESS",
-        includeBootstrap: this.props.addBootstrap
-      }
+      userOptionsObj
+    );
+
+    // Copy the gulpfile.js file
+    this.fs.copyTpl(
+      this.templatePath("gulpfile.js"),
+      this.destinationPath("gulpfile.js"),
+      userOptionsObj
+    );
+
+    // Generate the proper stylesheet file
+    this.fs.write(
+      this.destinationPath(
+        `src/${this.props.stylesPreprocessor.toLowerCase()}/styles.${this.props.stylesPreprocessor.toLowerCase()}`
+      ),
+      "/* The styles goes here */"
     );
   }
 
-  install() {
-    this.installDependencies();
-  }
+  //   install() {
+  //     this.installDependencies();
+  //   }
 };
