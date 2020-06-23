@@ -30,17 +30,12 @@ function generatePkgDependenciesFile(options) {
     pkgObj.devDependencies["popper.js"] = "^1.16.1";
   }
 
-  switch (options.stylesPreprocessor) {
-    case "LESS":
-      pkgObj.dependencies["less"] = "~3.11.3";
-      pkgObj.devDependencies["gulp-less"] = "^4.0.1";
-      pkgObj.dependencies["path"] = "^0.12.7";
-      break;
-    case "SASS":
-    case "SCSS":
-      pkgObj.dependencies["sass"] = "~1.26.8";
-      pkgObj.devDependencies["gulp-sass"] = "^4.1.0";
-      break;
+  if (
+    options.stylesPreprocessor === "SASS" ||
+    options.stylesPreprocessor === "SCSS"
+  ) {
+    pkgObj.dependencies["sass"] = "~1.26.8";
+    pkgObj.devDependencies["gulp-sass"] = "^4.1.0";
   }
 
   return pkgObj;
@@ -75,7 +70,7 @@ module.exports = class extends Generator {
       {
         type: "list",
         name: "stylesPreprocessor",
-        choices: ["CSS", "SASS", "SCSS", "LESS"],
+        choices: ["CSS", "SASS", "SCSS"],
         default: 0
       }
     ];
@@ -99,7 +94,7 @@ module.exports = class extends Generator {
       name: this.props.projectName,
       git: false,
       travis: false,
-      skipInstall: true,
+      skipInstall: this.options.skipInstall,
       readme: ""
     });
   }
@@ -111,8 +106,7 @@ module.exports = class extends Generator {
       projectName: this.props.projectName,
       isPrecompiled:
         this.props.stylesPreprocessor === "SASS" ||
-        this.props.stylesPreprocessor === "SCSS" ||
-        this.props.stylesPreprocessor === "LESS",
+        this.props.stylesPreprocessor === "SCSS",
       includeBootstrap: this.props.addBootstrap,
       preprocesorExtension: this.props.stylesPreprocessor
     };
@@ -138,11 +132,22 @@ module.exports = class extends Generator {
     );
 
     // Generate the proper stylesheet file
+    let stylesInitialLines = `/* The styles goes here */\n${
+      this.props.addBootstrap && !userOptionsObj.isPrecompiled
+        ? '@import "../../node_modules/bootstrap/scss/bootstrap";'
+        : ""
+    }`;
     this.fs.write(
       this.destinationPath(
         `src/${this.props.stylesPreprocessor.toLowerCase()}/styles.${this.props.stylesPreprocessor.toLowerCase()}`
       ),
-      "/* The styles goes here */"
+      stylesInitialLines
+    );
+
+    // Generate the basic init JS file
+    this.fs.write(
+      this.destinationPath("src/js/script.js"),
+      "// Place your Javascript code here"
     );
   }
 

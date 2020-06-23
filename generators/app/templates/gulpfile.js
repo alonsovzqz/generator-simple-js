@@ -1,27 +1,37 @@
 const { src, dest, watch, series } = require("gulp");
-<% if (isPrecompiled) { %><% if (preprocesorExtension === "SASS" || preprocesorExtension === "SCSS") { %>
-const sass = require("gulp-sass");<% } %><% if (preprocesorExtension === "LESS") { %>
-const less = require("gulp-less");
-const path = require("path");<% } %><% } %>
+<% if (isPrecompiled) { %>const sass = require("gulp-sass");<% } %>
 const browserSync = require("browser-sync").create();
 
-// Compile <%= preprocesorExtension.toLowerCase() %> into css
+<% if (!isPrecompiled && includeBootstrap) { %>
+// Copy Bootstrap files
+function copyBootstrap() {
+    return src("./node_modules/bootstrap/dist/css/bootstrap.min.css").pipe(
+      dest("src/css")
+    );
+  }
+<% } %>
+// Compile <%= preprocesorExtension.toLowerCase() %> files
 function style() {
   return src("src/<%= preprocesorExtension.toLowerCase() %>/**/*.<%= preprocesorExtension.toLowerCase() %>")
   <% if (isPrecompiled) { %>
-    <% if (preprocesorExtension === "SASS" || preprocesorExtension === "SCSS") { %>
     .pipe(sass().on("error", sass.logError)) 
-    <% } %>
-    <% if (preprocesorExtension === "LESS") { %>
-        .pipe(less({
-            paths: [path.join(__dirname, '<%= preprocesorExtension.toLowerCase() %>', 'includes')]
-        }))
-    <% } %>
     .pipe(dest("src/css"))
   <% } %>
     .pipe(browserSync.stream());
 }
 
+<% if(includeBootstrap) { %>
+// Copy JS file dependencies to final JS folder
+function cpScript() {
+    return src([
+      "./node_modules/jquery/dist/jquery.min.js",
+      "./node_modules/popper.js/dist/popper.min.js",
+      "./node_modules/bootstrap/dist/js/bootstrap.min.js"
+    ]).pipe(dest("src/js"));
+  }
+  <% } %>
+
+// Initialize the server
 function serve(cb) {
   browserSync.init({
     server: {
@@ -38,4 +48,6 @@ function serve(cb) {
 }
 
 exports.style = style;
-exports.default = series(serve);
+<% if(includeBootstrap) { %>exports.scripts = cpScript;<% } %>
+<% if (!isPrecompiled && includeBootstrap) { %>exports.bootstrap = copyBootstrap;<% } %>
+exports.default = series(<% if (!isPrecompiled && includeBootstrap) { %>copyBootstrap, <% } %>style, <% if(includeBootstrap) { %>cpScript, <% } %>serve);
